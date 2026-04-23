@@ -16,18 +16,18 @@ public enum ProbingStrategy
 }
 public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 {
-    private TKey[] _keys;
-    private TValue[] _values;
-    private bool[] _occupied;
-    private bool[] _deleted; 
+    private TKey[] keys;
+    private TValue[] values;
+    private bool[] occupied;
+    private bool[] deleted; 
 
-    private int _count;
+    private int count;
     private readonly ProbingStrategy _strategy;
 
     private const int InitialCapacity = 16;
-    private const double LoadFactorThreshold = 0.6;
+    private const double LoadFactor = 0.6;
 
-    public int size => _keys.Length;
+    public int size => keys.Length;
     public OpenAddressingHashTable(ProbingStrategy strategy = ProbingStrategy.Linear)
     {
         _strategy = strategy;
@@ -36,11 +36,11 @@ public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 
     private void InitializeArrays(int capacity)
     {
-        _keys = new TKey[capacity];
-        _values = new TValue[capacity];
-        _occupied = new bool[capacity];
-        _deleted = new bool[capacity];
-        _count = 0;
+        keys = new TKey[capacity];
+        values = new TValue[capacity];
+        occupied = new bool[capacity];
+        deleted = new bool[capacity];
+        count = 0;
     }
 
     public int GetHash(TKey key)
@@ -49,6 +49,7 @@ public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
             throw new ArgumentNullException(nameof(key));
 
         int hash = key.GetHashCode();
+
         return (hash & 0x7fffffff) % size;
     }
 
@@ -58,6 +59,7 @@ public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
             throw new ArgumentNullException(nameof(key));
 
         int hash = key.GetHashCode();
+
         return 1 + ((hash & 0x7fffffff) % (size - 1));
     }
 
@@ -79,15 +81,16 @@ public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
     public void Resize()
     {
         int resize = size * 2;
-        var oldKeys = _keys;
-        var oldValues = _values;
-        var oldOccupied = _occupied;
+        var oldKeys = keys;
+        var oldValues = values;
+        var oldOccupied = occupied;
+        var oldDeleted = deleted;
 
         InitializeArrays(resize);
 
         for( int i = 0; i < oldOccupied.Length;  i++ )
         {
-            if (oldOccupied[i] == true)
+            if (oldOccupied[i] && !oldDeleted[i])
             {
                 Add(oldKeys[i], oldValues[i]);
             }
@@ -103,37 +106,86 @@ public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 
     public ICollection<TValue> Values => throw new System.NotImplementedException();
 
-    public int Count => throw new System.NotImplementedException();
+    public int Count => count;
 
-    public bool IsReadOnly => throw new System.NotImplementedException();
+    public bool IsReadOnly => false;
 
     public void Add(TKey key, TValue value)
     {
-        throw new System.NotImplementedException();
+        if(key == null)
+        {
+            throw new ArgumentNullException(nameof(key));
+        }
+
+        if ((double)(Count) / size > LoadFactor)
+        {
+            Resize();
+        }
+
+        int Tombstone = -1;
+
+        for (int attempt = 0; attempt < size; attempt++)
+        {
+            int index = GetIndex(key, attempt);
+
+            if (!occupied[index] && !deleted[index])
+            {
+                int insertAt = Tombstone != -1 ? Tombstone : index;
+
+                keys[index] = key;
+                values[index] = value;
+                occupied[index] = true;
+                deleted[index] = false;
+                count++;
+
+                return;
+            }
+            else if (deleted[index])
+            {
+                if (Tombstone == -1)
+                {
+                    Tombstone = index;
+                }
+            }
+            else if (occupied[index] && EqualityComparer<TKey>.Default.Equals(keys[index], key))
+            {
+                 throw new ArgumentException("이미 동일한 키가 존재합니다.");
+            }
+        }
     }
 
     public void Add(KeyValuePair<TKey, TValue> item)
     {
-        throw new System.NotImplementedException();
+        Add(item.Key, item.Value);
     }
 
     public void Clear()
     {
-        Array.Clear(_keys, 0, size);
-        Array.Clear(_values, 0, size);
-        Array.Clear(_occupied, 0, size);
-        Array.Clear(_deleted, 0, size);
-        _count = 0;
+        Array.Clear(keys, 0, size);
+        Array.Clear(values, 0, size);
+        Array.Clear(occupied, 0, size);
+        Array.Clear(deleted, 0, size);
+        count = 0;
     }
 
     public bool Contains(KeyValuePair<TKey, TValue> item)
     {
-        throw new System.NotImplementedException();
+        if (TryGetValue(item.Key, out TValue value))
+        {
+            return EqualityComparer<TValue>.Default.Equals(value, item.Value);
+        }
+
+        return false;
     }
 
     public bool ContainsKey(TKey key)
     {
-        throw new System.NotImplementedException();
+        if(key == null)
+        {
+            throw new ArgumentNullException(nameof(key));
+        }
+
+        return TryGetValue(key, out _);
     }
 
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
@@ -148,17 +200,71 @@ public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 
     public bool Remove(TKey key)
     {
-        throw new System.NotImplementedException();
+        if (key == null)
+        {
+            throw new ArgumentNullException(nameof(key));
+        }
+
+        for (int attempt = 0; attempt < size; attempt++)
+        {
+            int index = GetIndex(key, attempt);
+
+            if (!occupied[index] && !deleted[index])
+            {
+                return false;
+            }
+
+            if (occupied[index] && EqualityComparer<TKey>.Default.Equals(keys[index], key))
+            {
+                occupied[index] = false;
+                deleted[index] = true; 
+                keys[index] = default; 
+                values[index] = default;
+                count--;
+
+                return true;
+            }
+        }
+        return false;
     }
 
     public bool Remove(KeyValuePair<TKey, TValue> item)
     {
-        throw new System.NotImplementedException();
+        if (Contains(item))
+        {
+            return Remove(item.Key);
+        }
+
+        return false;
     }
 
     public bool TryGetValue(TKey key, out TValue value)
     {
-        throw new System.NotImplementedException();
+        if(key == null)
+        {
+            throw new ArgumentNullException(nameof(key));
+        }
+
+        for (int attempt = 0; attempt < size; attempt++)
+        {
+            int index = GetIndex(key, attempt);
+
+            if (!occupied[index] && !deleted[index])
+            {
+                break;
+            }
+
+            if (occupied[index] && EqualityComparer<TKey>.Default.Equals(keys[index], key))
+            {
+                value = values[index];
+
+                return true;
+            }
+        }
+
+        value = default;
+
+        return false;
     }
 
     IEnumerator IEnumerable.GetEnumerator()
