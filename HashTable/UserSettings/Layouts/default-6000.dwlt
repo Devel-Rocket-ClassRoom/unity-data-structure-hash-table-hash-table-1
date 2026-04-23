@@ -352,8 +352,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "UnityEditor.MainToolbarWindow\u200B"
   m_Pos:
     serializedVersion: 2
-    x: -32000
-    y: -32000
+    x: 0
+    y: 0
     width: 1920
     height: 36
   m_SerializedDataModeController:
@@ -633,7 +633,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 618
+    y: 563
     width: 754
     height: 368
   m_SerializedDataModeController:
@@ -736,7 +736,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 79
+    y: 24
     width: 754
     height: 513
   m_SerializedDataModeController:
@@ -1348,8 +1348,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Hierarchy\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 755
-    y: 79
+    x: 1
+    y: 24
     width: 287
     height: 596
   m_SerializedDataModeController:
@@ -1368,8 +1368,7 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs:
-      - m_Data: 45208
+      m_SelectedIDs: []
       m_LastClickedID:
         m_Data: 0
       m_ExpandedIDs:
@@ -1420,8 +1419,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Console\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 755
-    y: 701
+    x: 1
+    y: 646
     width: 287
     height: 285
   m_SerializedDataModeController:
@@ -1458,8 +1457,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Project\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1044
-    y: 79
+    x: 1045
+    y: 24
     width: 355
     height: 907
   m_SerializedDataModeController:
@@ -1623,8 +1622,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1401
-    y: 79
+    x: 1402
+    y: 24
     width: 518
     height: 907
   m_SerializedDataModeController:
