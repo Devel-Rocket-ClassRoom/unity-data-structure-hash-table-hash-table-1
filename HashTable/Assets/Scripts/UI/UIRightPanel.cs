@@ -25,6 +25,8 @@ public class UIRightPanel : MonoBehaviour
     public TextMeshProUGUI Key;
     public TextMeshProUGUI Value;
 
+    public UIIndexScrollView scrollView;
+
     private void OnEnable()
     {
         if (coroutine != null)
@@ -38,6 +40,8 @@ public class UIRightPanel : MonoBehaviour
     {
         currentType = HashTableType.Simple;
         HashTable.value = (int)currentType;
+        hashTable = new SimpleHashTable<string, string>();
+        scrollView.InstantiateIndex(hashTable);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -92,23 +96,28 @@ public class UIRightPanel : MonoBehaviour
                 hashTable = new Chaining<string, string>();
                 break;
             case HashTableType.OpenAdressing:
-                //hashTable = new SimpleHashTable<int, int>();
+                hashTable = new OpenAddressingHashTable<string, string>();
                 break;
         }
+
+        scrollView.UpdateLines(hashTable);
     }
 
     public void OnAdd()
     {
         hashTable.Add(Key.text, Value.text);
+        scrollView.UpdateLines(hashTable);
     }
 
     public void OnRemove()
     {
         hashTable.Remove(Key.text);
+        scrollView.UpdateLines(hashTable);
     }
 
     public void OnClear()
     {
         hashTable.Clear();
+        scrollView.UpdateLines(hashTable);
     }
 }

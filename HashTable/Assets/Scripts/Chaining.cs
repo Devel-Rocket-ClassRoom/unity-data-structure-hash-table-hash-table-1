@@ -8,8 +8,9 @@ using static UnityEditor.Progress;
 public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
 {
     public List<(TKey key, TValue value)> chainList;
+    private int size = 16;
 
-    public List<(TKey key, TValue value)>[] hashTable = new List<(TKey key, TValue value)>[16];
+    public List<List<(TKey key, TValue value)>> hashTable = new();
 
     public TValue this[TKey key]
     {
@@ -32,7 +33,7 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
 
     public ICollection<TValue> Values => throw new System.NotImplementedException();
 
-    public int Count => hashTable.Length;
+    public int Count => size;
 
     private IComparer comparer;
 
@@ -65,7 +66,7 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
     public void Add(TKey key, TValue value)
     {
         int hash = key.GetHashCode();
-        int index = (hash & 0x7fffffff) % hashTable.Length;
+        int index = (hash & 0x7fffffff) % size;
 
         if (hashTable[index] == null)
         {
@@ -75,7 +76,7 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
 
         hashTable[index].Add((key, value));
 
-        if((float)count / hashTable.Length > LoadFactor)
+        if((float)count / size > LoadFactor)
         {
             Resize();
         }
@@ -88,10 +89,9 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
 
     private void Resize()
     {
-        var tempTable = hashTable;
-        hashTable = new List<(TKey key, TValue value)>[hashTable.Length * 2];
+        size *= 2;
 
-        foreach(var value in tempTable)
+        foreach(var value in hashTable)
         {
             if(value != null)
             {
@@ -111,7 +111,7 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
     public bool Contains(KeyValuePair<TKey, TValue> item)
     {
         int hash = item.Key.GetHashCode();
-        int index = (hash & 0x7fffffff) % hashTable.Length;
+        int index = (hash & 0x7fffffff) % size;
 
         if(hashTable[index] == null)
         {
@@ -132,7 +132,7 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
     public bool ContainsKey(TKey key)
     {
         int hash = key.GetHashCode();
-        int index = (hash & 0x7fffffff) % hashTable.Length;
+        int index = (hash & 0x7fffffff) % size;
 
         if (hashTable[index] == null)
         {
@@ -158,6 +158,7 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
     {
         throw new System.NotImplementedException();
+        //return hashTable.GetEnumerator();
     }
 
     public bool Remove(TKey key)
@@ -173,7 +174,7 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
     public bool TryGetValue(TKey key, out TValue value)
     {
         int hash = key.GetHashCode();
-        int index = (hash & 0x7fffffff) % hashTable.Length;
+        int index = (hash & 0x7fffffff) % size;
 
         if (hashTable[index] == null)
         {
