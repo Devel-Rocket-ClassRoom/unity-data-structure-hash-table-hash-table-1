@@ -4,18 +4,16 @@ using System.Collections.Generic;
 
 public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 {
-    private int size = 16;
-    public int Capacity => size;
-
+    private int capacity = 16;
     private int count = 0;
-    public int Count => count;
+    public int Count => capacity;
 
     private List<KeyValuePair<TKey, TValue>> hashTable = new();
     private List<bool> occupied = new();
 
     public SimpleHashTable()
     {
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < capacity; i++)
         {
             hashTable.Add(new KeyValuePair<TKey, TValue>());
             occupied.Add(false);
@@ -45,7 +43,7 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 
     public void Add(KeyValuePair<TKey, TValue> item)
     {
-        if ((double)count / size > 0.75)
+        if ((double)count / capacity > 0.75)
         {
             Resize();
         }
@@ -63,10 +61,9 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
         hashTable.Clear();
         occupied.Clear();
 
-        size = 16;
         count = 0;
 
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < capacity; i++)
         {
             hashTable[i] = new KeyValuePair<TKey, TValue>();
             occupied[i] = false;
@@ -90,7 +87,7 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
     {
-        throw new NotImplementedException();
+        return hashTable.GetEnumerator();
     }
 
     public bool Remove(KeyValuePair<TKey, TValue> item)
@@ -121,16 +118,16 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
     private int GetHash(TKey key)
     {
         int hash = key.GetHashCode();
-        return (hash & 0x7fffffff) % size;
+        return (hash & 0x7fffffff) % capacity;
     }
 
     private void Resize()
     {
-        size *= 2;
+        capacity *= 2;
         List<KeyValuePair<TKey, TValue>> newHashTable = new();
         List<bool> newOccupied = new();
 
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < capacity; i++)
         {
             newHashTable.Add(new KeyValuePair<TKey, TValue>());
             newOccupied.Add(false);

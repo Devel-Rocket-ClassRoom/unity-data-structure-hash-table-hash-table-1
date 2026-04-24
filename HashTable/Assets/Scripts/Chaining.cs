@@ -32,9 +32,11 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
 
     public ICollection<TValue> Values => throw new System.NotImplementedException();
 
-    public int Count => CountValues();
+    public int Count => hashTable.Length;
 
     private IComparer comparer;
+
+    private int count = 0;
 
     public Chaining()
     {
@@ -68,11 +70,12 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
         if (hashTable[index] == null)
         {
             hashTable[index] = new List<(TKey key, TValue value)>();
+            count++;
         }
 
         hashTable[index].Add((key, value));
 
-        if((float)Count/hashTable.Length > LoadFactor)
+        if((float)count / hashTable.Length > LoadFactor)
         {
             Resize();
         }
@@ -194,29 +197,5 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
-    }
-
-    public string GetHashValues(int index)
-    {
-        if (hashTable[index] == null)
-        {
-            return string.Empty;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        
-        for(int i = 0; i < hashTable[index].Count; i++)
-        {
-            if(i == 0)
-            {
-                sb.Append($"키: {hashTable[index][i].key}, 값: {hashTable[index][i].value}");
-            }
-            else
-            {
-                sb.Append($"-> 키: {hashTable[index][i].key}, 값: {hashTable[index][i].value}");
-            }
-        }
-
-        return sb.ToString();
     }
 }

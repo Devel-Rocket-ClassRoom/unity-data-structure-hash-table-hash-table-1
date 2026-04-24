@@ -148,6 +148,7 @@ GameObject:
   - component: {fileID: 2650959028854348695}
   - component: {fileID: 5717347498159753362}
   - component: {fileID: 698143236664363473}
+  - component: {fileID: 3794039040996483241}
   m_Layer: 5
   m_Name: line
   m_TagString: Untagged
@@ -164,7 +165,7 @@ RectTransform:
   m_GameObject: {fileID: 4049127514940317005}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.9347827, y: 2.9347827, z: 2.9347827}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6931678101665984340}
@@ -213,3 +214,16 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3794039040996483241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4049127514940317005}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68f1f4a0c9d70624b8053598645b27bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UILine
+  Text: {fileID: 3473662495038089727}

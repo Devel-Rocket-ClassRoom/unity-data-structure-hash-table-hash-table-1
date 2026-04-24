@@ -466,7 +466,7 @@ GameObject:
   - component: {fileID: 144074229}
   - component: {fileID: 144074232}
   m_Layer: 5
-  m_Name: Image (5)
+  m_Name: LogPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2744,7 +2744,7 @@ GameObject:
   - component: {fileID: 948046588}
   - component: {fileID: 948046587}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: OpenAdressingDropDown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3367,7 +3367,19 @@ MonoBehaviour:
       m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1510945510}
+        m_TargetAssemblyTypeName: UIRightPanel, Assembly-CSharp
+        m_MethodName: OnHashTableChange
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_AlphaFadeSpeed: 0.15
 --- !u!114 &1110844710
 MonoBehaviour:
@@ -3636,7 +3648,7 @@ GameObject:
   - component: {fileID: 1253711022}
   - component: {fileID: 1253711021}
   m_Layer: 5
-  m_Name: Image
+  m_Name: LeftPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4034,8 +4046,9 @@ GameObject:
   - component: {fileID: 1510945509}
   - component: {fileID: 1510945508}
   - component: {fileID: 1510945507}
+  - component: {fileID: 1510945510}
   m_Layer: 5
-  m_Name: Image
+  m_Name: RightPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4130,6 +4143,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1510945505}
   m_CullTransparentMesh: 1
+--- !u!114 &1510945510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1510945505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 420a733af78b7004ebf8d6355881ea0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIRightPanel
+  HashTable: {fileID: 1110844709}
+  Adress: {fileID: 2026226943}
+  Key: {fileID: 1036756336}
+  Value: {fileID: 935574127}
 --- !u!1 &1537581634
 GameObject:
   m_ObjectHideFlags: 0
@@ -4142,7 +4171,7 @@ GameObject:
   - component: {fileID: 1537581637}
   - component: {fileID: 1537581636}
   m_Layer: 5
-  m_Name: Image (2)
+  m_Name: KeyInput
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4492,7 +4521,7 @@ GameObject:
   - component: {fileID: 1683485260}
   - component: {fileID: 1683485259}
   m_Layer: 5
-  m_Name: Image (3)
+  m_Name: ValueInput
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4866,7 +4895,7 @@ GameObject:
   - component: {fileID: 1772831101}
   - component: {fileID: 1772831100}
   m_Layer: 5
-  m_Name: Image (6)
+  m_Name: Buttons
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
