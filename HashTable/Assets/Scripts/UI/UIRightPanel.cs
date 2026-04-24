@@ -20,6 +20,7 @@ public class UIRightPanel : MonoBehaviour
     public TextMeshProUGUI logText;
 
     private HashTableType currentType;
+    private ProbingStrategy ProbingStrategyType;
 
     private Coroutine coroutine;
 
@@ -47,9 +48,29 @@ public class UIRightPanel : MonoBehaviour
         scrollView.InstantiateIndex(hashTable);
     }
 
+    private void Start()
+    {
+        AdressDropDown.interactable = false;
+        coroutine = StartCoroutine(CoAdress());
+    }
+
+    private IEnumerator CoAdress()
+    {
+        yield return new WaitForSeconds(0.01f);
+        AdressDropDown.captionText.text = "-";
+    }
+
     public void OnTypeChange(int index)
     {
+        OnClear();
+
         currentType = (HashTableType)index;
+
+        if(currentType == HashTableType.OpenAdressing)
+        {
+            AdressDropDown.interactable = true;
+       
+        }
 
         switch (currentType)
         {
@@ -65,6 +86,32 @@ public class UIRightPanel : MonoBehaviour
                 break;
             case HashTableType.OpenAdressing:
                 hashTable = new OpenAddressingHashTable<string, string>();
+                currentType = HashTableType.OpenAdressing;
+                scrollView.UpdateLines(hashTable);
+                break;
+        }
+    }
+
+    public void OnProbingStrategyChange(int index)
+    {
+        OnClear();
+
+        ProbingStrategyType = (ProbingStrategy)index;
+
+        switch (ProbingStrategyType)
+        {
+            case ProbingStrategy.Linear:
+                hashTable = new OpenAddressingHashTable<string, string>(ProbingStrategyType);
+                currentType = HashTableType.Simple;
+                scrollView.UpdateLines(hashTable);
+                break;
+            case ProbingStrategy.Quadratic:
+                hashTable = new OpenAddressingHashTable<string, string>(ProbingStrategyType);
+                currentType = HashTableType.Chaining;
+                scrollView.ChainUpdate(chaining);
+                break;
+            case ProbingStrategy.DoubleHash:
+                hashTable = new OpenAddressingHashTable<string, string>(ProbingStrategyType);
                 currentType = HashTableType.OpenAdressing;
                 scrollView.UpdateLines(hashTable);
                 break;
@@ -124,9 +171,11 @@ public class UIRightPanel : MonoBehaviour
         {
             case HashTableType.Simple:
             case HashTableType.OpenAdressing:
+                hashTable.Clear();
                 scrollView.UpdateLines(hashTable);
                 break;
             case HashTableType.Chaining:
+                chaining.Clear();
                 scrollView.ChainUpdate(chaining);
                 break;
         }

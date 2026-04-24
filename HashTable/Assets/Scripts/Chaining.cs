@@ -103,7 +103,7 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
 
     public void Clear()
     {
-        hashTable = null;
+        hashTable = new();
         for (int i = 0; i < size; i++)
         {
             hashTable.Add(new List<(TKey key, TValue value)>());
