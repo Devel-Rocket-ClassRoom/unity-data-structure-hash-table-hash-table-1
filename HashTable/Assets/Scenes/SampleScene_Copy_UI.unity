@@ -204,7 +204,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1510945510}
         m_TargetAssemblyTypeName: UIRightPanel, Assembly-CSharp
-        m_MethodName: OnRemove
+        m_MethodName: OnClear
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1467,7 +1467,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e2238b5fe53ff04ab400a9c75106d7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIIndexScrollView
-  IndexInfo: {fileID: 3794039040996483241, guid: 352158a17128f2f4ebc96fd065e3fcb9, type: 3}
+  line: {fileID: 3794039040996483241, guid: 352158a17128f2f4ebc96fd065e3fcb9, type: 3}
   ScrollRect: {fileID: 361845545}
 --- !u!114 &361845545
 MonoBehaviour:
@@ -3394,7 +3394,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1510945510}
         m_TargetAssemblyTypeName: UIRightPanel, Assembly-CSharp
-        m_MethodName: OnHashTableChange
+        m_MethodName: OnTypeChange
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4179,8 +4179,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 420a733af78b7004ebf8d6355881ea0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIRightPanel
-  HashTable: {fileID: 1110844709}
-  Adress: {fileID: 2026226943}
+  HashTableDropDown: {fileID: 1110844709}
+  AdressDropDown: {fileID: 2026226943}
   Key: {fileID: 1036756336}
   Value: {fileID: 935574127}
   scrollView: {fileID: 361845544}
