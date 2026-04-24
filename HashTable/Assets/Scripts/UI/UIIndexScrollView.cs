@@ -1,27 +1,53 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.Rendering.DebugUI;
 
 public class UIIndexScrollView : MonoBehaviour
 {
-    public UILine line;
+    public UILine IndexInfo;
     public ScrollRect ScrollRect;
 
     private List<UILine> lines = new();
 
-    public void UpdateContent(IDictionary<string, string> table)
+    public void InstantiateIndex(IDictionary<string, string> table)
     {
-        if(lines.Count < table.Count)
+        int index = 0;
+        foreach (var value in table)
         {
-            for (int i = lines.Count; i < table.Count; i++)
+            var line = Instantiate(IndexInfo, ScrollRect.content);
+            lines.Add(line);
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"l: {index} ");
+            if (value.Key != null)
             {
-                var newLine = Instantiate(line, ScrollRect.content);
-                lines.Add(newLine);
+                sb.Append($"key:{value.Key}, value: {value.Value}");
+                line.GetComponent<Image>().color = Color.green;
             }
+            else
+            {
+                line.GetComponent<Image>().color = Color.white;
+            }
+
+            line.SetText(sb.ToString());
+
+            index++;
+        }
+    }
+
+    public void UpdateLines(IDictionary<string, string> table)
+    {
+        if(table.Count > lines.Count)
+        {
+            var lines = GameObject.FindGameObjectsWithTag("line");
+            foreach(var line in lines)
+            {
+                Destroy(line);
+            }
+
+            InstantiateIndex(table);
+            return;
         }
 
         int index = 0;
@@ -51,7 +77,7 @@ public class UIIndexScrollView : MonoBehaviour
         {
             for (int i = lines.Count; i < table.Count; i++)
             {
-                var newLine = Instantiate(line, ScrollRect.content);
+                var newLine = Instantiate(IndexInfo, ScrollRect.content);
                 lines.Add(newLine);
             }
         }

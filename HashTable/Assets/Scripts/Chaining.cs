@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEditor.Progress;
@@ -31,13 +32,13 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
         set => Add(key, value);
     }
 
-    public ICollection<TKey> Keys => throw new System.NotImplementedException();
+    public ICollection<TKey> Keys => GetKeys();
 
-    public ICollection<TValue> Values => throw new System.NotImplementedException();
+    public ICollection<TValue> Values => GetValues();
 
     public int Count => size;
 
-    private IComparer comparer;
+    private IEqualityComparer comparer;
 
     private int count = 0;
 
@@ -47,7 +48,7 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
         {
             hashTable.Add(new List<(TKey key, TValue value)>());
         }
-        comparer = Comparer<TValue>.Default;
+        comparer = EqualityComparer<TKey>.Default;
     }
 
     public bool IsReadOnly => false;
@@ -103,6 +104,10 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
     public void Clear()
     {
         hashTable = null;
+        for (int i = 0; i < size; i++)
+        {
+            hashTable.Add(new List<(TKey key, TValue value)>());
+        }
     }
 
     public bool Contains(KeyValuePair<TKey, TValue> item)
@@ -117,7 +122,7 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
 
         foreach(var value in hashTable[index])
         {
-            if(comparer.Compare(value.value, item.Value) == 0)
+            if(comparer.Equals(value.key, item.Key))
             {
                 return true;
             }
@@ -138,7 +143,7 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
 
         foreach (var value in hashTable[index])
         {
-            if (comparer.Compare(value.key, key) == 0)
+            if (comparer.Equals(value.key, key))
             {
                 return true;
             }
@@ -149,7 +154,16 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
 
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
     {
-        throw new System.NotImplementedException();
+        foreach(var item in hashTable)
+        {
+            if (item != null)
+            {
+                foreach (var temp in item)
+                {
+                    array[arrayIndex++] = new KeyValuePair<TKey, TValue>(temp.key, temp.value);
+                }
+            }
+        }
     }
 
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
@@ -170,7 +184,7 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
 
         foreach(var temp in hashTable[index])
         {
-            if(comparer.Compare(temp.key, key) == 0)
+            if(comparer.Equals(temp.key, key))
             {
                 hashTable[index].Clear();
                 return true;
@@ -187,7 +201,7 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
 
         foreach (var temp in hashTable[index])
         {
-            if (comparer.Compare(temp.value, item.Value) == 0)
+            if (comparer.Equals(temp.key, item.Key))
             {
                 hashTable[index].Remove((item.Key, item.Value));
                 return true;
@@ -210,7 +224,7 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
 
         foreach (var item in hashTable[index])
         {
-            if (comparer.Compare(item.key, key) == 0)
+            if (comparer.Equals(item.key, key))
             {
                 value = item.value;
                 return true;
@@ -229,5 +243,41 @@ public class Chaining<TKey, TValue> : IDictionary<TKey, TValue>
     public List<(TKey key, TValue value)> GetList(int index)
     {
         return hashTable[index];
+    }
+
+    private ICollection<TKey> GetKeys()
+    {
+        List<TKey> keys = new();
+
+        foreach(var item in hashTable)
+        {
+            if(item != null)
+            {
+                foreach(var values in item)
+                {
+                    keys.Add(values.key);
+                }
+            }
+        }
+
+        return keys;
+    }
+
+    private ICollection<TValue> GetValues()
+    {
+        List<TValue> values = new();
+
+        foreach (var item in hashTable)
+        {
+            if (item != null)
+            {
+                foreach (var value in item)
+                {
+                    values.Add(value.value);
+                }
+            }
+        }
+
+        return values;
     }
 }

@@ -116,30 +116,70 @@ public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
                 throw new ArgumentNullException(nameof(key));
             }
 
-            for (int attempt = 0; attempt < size; attempt++)
+            if(ContainsKey(key))
             {
-                int index = GetIndex(key, attempt);
-
-                if (!occupied[index] && !deleted[index])
+                for (int attempt = 0; attempt < size; attempt++)
                 {
-                    break;
-                }
+                    int index = GetIndex(key, attempt);
 
-                if (occupied[index] && EqualityComparer<TKey>.Default.Equals(keys[index], key))
-                {
-                    values[index] = value;
-                    return; 
+                    if (!occupied[index] && !deleted[index])
+                    {
+                        break;
+                    }
+
+                    if (occupied[index] && EqualityComparer<TKey>.Default.Equals(keys[index], key))
+                    {
+                        values[index] = value;
+                        return;
+                    }
                 }
             }
-
-            Add(key, value);
+            else
+            {
+                Add(key, value);
+            }
         }
     }
 
-    public ICollection<TKey> Keys => throw new System.NotImplementedException();
+    public ICollection<TKey> Keys
+    {
+        get
+        {
+            TKey[] temp = new TKey[size];
 
-    public ICollection<TValue> Values => throw new System.NotImplementedException();
+            int index = 0;
 
+            for(int i = 0; i <size; i++)
+            {
+                if (occupied[i] && !deleted[i])
+                {
+                    temp[index++] = keys[i];
+                }
+            }
+
+            return temp;
+        }
+    }
+
+    public ICollection<TValue> Values
+    {
+        get
+        {
+            TValue[] temp = new TValue[size];
+
+            int index = 0;
+
+            for (int i = 0; i < size; i++)
+            {
+                if (occupied[i] && !deleted[i])
+                {
+                    temp[index++] = values[i];
+                }
+            }
+
+            return temp;
+        }
+    }
     public int Count => count;
 
     public bool IsReadOnly => false;
@@ -166,10 +206,10 @@ public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
             {
                 int insertAt = Tombstone != -1 ? Tombstone : index;
 
-                keys[index] = key;
-                values[index] = value;
-                occupied[index] = true;
-                deleted[index] = false;
+                keys[insertAt] = key;
+                values[insertAt] = value;
+                occupied[insertAt] = true;
+                deleted[insertAt] = false;
                 count++;
 
                 return;
@@ -186,6 +226,8 @@ public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
                  throw new ArgumentException("이미 동일한 키가 존재합니다.");
             }
         }
+
+        throw new InvalidOperationException("해시 테이블이 가득 찼습니다.");
     }
 
     public void Add(KeyValuePair<TKey, TValue> item)
@@ -224,7 +266,28 @@ public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
     {
-        throw new System.NotImplementedException();
+        if(array == null)
+        {
+            throw new ArgumentNullException(nameof(array));
+        }
+
+        if( arrayIndex < 0 )
+        {
+            throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+        }
+
+        if(array.Length - arrayIndex < count)
+        {
+            throw new ArgumentException(nameof(array));
+        }
+
+        for (int i = 0; i < size; i++)
+        {
+            if (occupied[i] && !deleted[i])
+            {
+                array[arrayIndex++] = new KeyValuePair<TKey, TValue>(keys[i], values[i]);
+            }
+        }
     }
 
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
