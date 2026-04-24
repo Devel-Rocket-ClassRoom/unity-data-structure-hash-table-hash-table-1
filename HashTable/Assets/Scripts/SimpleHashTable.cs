@@ -1,7 +1,7 @@
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 {
@@ -27,6 +27,8 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
     {
         get
         {
+            if (!ContainsKey(key)) throw new KeyNotFoundException("키 없음");
+
             int index = GetHash(key);
             return hashTable[index].Value;
         }
@@ -193,7 +195,6 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
             newOccupied.Add(false);
         }
 
-        // 모든 원소를 새 크기 기준으로 해싱해 재배치
         // 모든 원소를 새 크기 기준으로 해싱해 재배치
         for (int i = 0; i < hashTable.Count; i++)
         {
