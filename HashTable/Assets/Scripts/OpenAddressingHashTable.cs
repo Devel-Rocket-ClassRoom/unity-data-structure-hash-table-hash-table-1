@@ -96,10 +96,44 @@ public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
             }
         }
     }
-    public TValue this[TKey key] 
-    { 
-        get => throw new System.NotImplementedException(); 
-        set => throw new System.NotImplementedException(); 
+    public TValue this[TKey key]
+    {
+        get
+        {
+            if (TryGetValue(key, out var value))
+            {
+                return value;
+            }
+            else
+            {
+                throw new KeyNotFoundException($"{key}를 찾을 수 없음");
+            }
+        }
+        set
+        {
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
+            for (int attempt = 0; attempt < size; attempt++)
+            {
+                int index = GetIndex(key, attempt);
+
+                if (!occupied[index] && !deleted[index])
+                {
+                    break;
+                }
+
+                if (occupied[index] && EqualityComparer<TKey>.Default.Equals(keys[index], key))
+                {
+                    values[index] = value;
+                    return; 
+                }
+            }
+
+            Add(key, value);
+        }
     }
 
     public ICollection<TKey> Keys => throw new System.NotImplementedException();
@@ -195,7 +229,13 @@ public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
     {
-        throw new System.NotImplementedException();
+        for (int i = 0; i < size; i++)
+        {
+            if(occupied[i] && !deleted[i])
+            {
+                yield return new KeyValuePair<TKey, TValue>(keys[i], values[i]);
+            }
+        }
     }
 
     public bool Remove(TKey key)
