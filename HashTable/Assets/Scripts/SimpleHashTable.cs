@@ -31,11 +31,48 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
             return hashTable[index].Value;
         }
 
-        set => throw new NotImplementedException();
+        set
+        {
+            int index = GetHash(key);
+            hashTable[index] = new KeyValuePair<TKey, TValue>(key, value);
+        }
     }
 
-    public ICollection<TKey> Keys => throw new NotImplementedException();
-    public ICollection<TValue> Values => throw new NotImplementedException();
+    public ICollection<TKey> Keys
+    {
+        get
+        {
+            var keyList = new List<TKey>();
+
+            for (int i = 0; i < hashTable.Count; i++)
+            {
+                if (occupied[i])
+                {
+                    keyList.Add(hashTable[i].Key);
+                }
+            }
+
+            return keyList;
+        }
+    }
+
+    public ICollection<TValue> Values
+    {
+        get
+        {
+            var valueList = new List<TValue>();
+
+            for (int i = 0; i < hashTable.Count; i++)
+            {
+                if (occupied[i])
+                {
+                    valueList.Add(hashTable[i].Value);
+                }
+            }
+
+            return valueList;
+        }
+    }
 
     public bool IsReadOnly => true;
 
@@ -83,17 +120,17 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 
     public bool Contains(KeyValuePair<TKey, TValue> item)
     {
-        throw new NotImplementedException();
+        return hashTable.Contains(item);
     }
 
     public bool ContainsKey(TKey key)
     {
-        throw new NotImplementedException();
+        return Keys.Contains(key);
     }
 
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
     {
-        throw new NotImplementedException();
+        hashTable.CopyTo(array, arrayIndex);
     }
 
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
@@ -118,7 +155,15 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 
     public bool TryGetValue(TKey key, out TValue value)
     {
-        throw new NotImplementedException();
+        if (ContainsKey(key))
+        {
+            int index = GetHash(key);
+            value = hashTable[index].Value;
+            return true;
+        }
+
+        value = default(TValue);
+        return false;
     }
 
     IEnumerator IEnumerable.GetEnumerator()
