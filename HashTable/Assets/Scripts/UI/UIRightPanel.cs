@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class UIRightPanel : MonoBehaviour
 {
@@ -26,6 +28,8 @@ public class UIRightPanel : MonoBehaviour
     public TextMeshProUGUI Value;
 
     public UIIndexScrollView scrollView;
+
+    public TextMeshProUGUI logText;
 
     private void OnEnable()
     {
@@ -105,19 +109,36 @@ public class UIRightPanel : MonoBehaviour
 
     public void OnAdd()
     {
-        hashTable.Add(Key.text, Value.text);
-        scrollView.UpdateLines(hashTable);
+        try
+        {
+            hashTable.Add(Key.text, Value.text);
+            logText.text = $"{logText.text}\nADD: {Key.text} -> {Value.text}";
+            scrollView.UpdateLines(hashTable);
+        }
+        catch (Exception)
+        {
+            logText.text = $"{logText.text}\nADD 실패: 키 중복";
+        }
     }
 
     public void OnRemove()
     {
-        hashTable.Remove(Key.text);
-        scrollView.UpdateLines(hashTable);
+        try
+        {
+            hashTable.Remove(Key.text);
+            logText.text = $"{logText.text}\nREMOVE: {Key.text}";
+            scrollView.UpdateLines(hashTable);
+        }
+        catch (Exception)
+        {
+            logText.text = $"{logText.text}\nREMOVE 실패: 키 없음";
+        }
     }
 
     public void OnClear()
     {
         hashTable.Clear();
+        logText.text = $"{logText.text}\nCLEAR: 모든 항목 삭제됨";
         scrollView.UpdateLines(hashTable);
     }
 }

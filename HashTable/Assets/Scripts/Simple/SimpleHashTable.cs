@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 {
@@ -51,7 +52,12 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
         }
 
         int index = GetHash(item.Key);
-        if (occupied[index]) throw new Exception("충돌");  // 충돌 처리
+        Debug.Log(index);
+
+        if (occupied[index])    // 이미 키 있을 때
+        {
+            throw new Exception("충돌");  // 충돌 처리
+        }
 
         hashTable[index] = item;
         occupied[index] = true;
@@ -100,7 +106,7 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
     public bool Remove(TKey key)
     {
         int index = GetHash(key);
-        hashTable.RemoveAt(index);
+        hashTable[index] = new KeyValuePair<TKey, TValue>();
         occupied[index] = false;
         count--;
 
@@ -120,11 +126,13 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
     private int GetHash(TKey key)
     {
         int hash = key.GetHashCode();
-        return (hash & 0x7fffffff) % capacity;
+        return (hash & 0x7fffffff) % hashTable.Capacity;
     }
 
     private void Resize()
     {
+        Debug.Log("Resize()");
+        
         capacity *= 2;
         List<KeyValuePair<TKey, TValue>> newHashTable = new();
         List<bool> newOccupied = new();
@@ -138,15 +146,22 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
         // 모든 원소를 새 크기 기준으로 해싱해 재배치
         for (int i = 0; i < hashTable.Count; i++)
         {
-            int newIndex = GetHash(hashTable[i].Key);
-
-            if (occupied[i])
+            if (!occupied[i])
             {
-                newHashTable[newIndex] = hashTable[i];
-                newOccupied[newIndex] = true;
+                continue;
             }
+            
+            int newIndex = GetHash(hashTable[i].Key);
+            newHashTable[newIndex] = hashTable[i];
+            newOccupied[newIndex] = true;
         }
 
         hashTable = newHashTable;
+        occupied = newOccupied;
+
+        foreach (var item in hashTable)
+        {
+            Debug.Log(item);
+        }
     }
 }

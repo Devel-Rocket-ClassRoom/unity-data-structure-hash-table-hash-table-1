@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TMPro;
+using Unity.Android.Gradle;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,16 +18,21 @@ public class UIIndexScrollView : MonoBehaviour
         int index = 0;
         foreach(var value in table)
         {
-            StringBuilder sb = new StringBuilder();
             var line = Instantiate(IndexInfo, ScrollRect.content);
             lines.Add(line);
+
+            StringBuilder sb = new StringBuilder();
             sb.Append($"l: {index} ");
-            if(value.Key != null)
+            if (value.Key != null)
             {
                 sb.Append($"key:{value.Key}, value: {value.Value}");
                 line.GetComponent<Image>().color = Color.green;
             }
-            line.GetComponent<Image>().color = Color.white;
+            else
+            {
+                line.GetComponent<Image>().color = Color.white;
+            }
+
             line.SetText(sb.ToString());
             
             index++;
@@ -35,6 +41,18 @@ public class UIIndexScrollView : MonoBehaviour
 
     public void UpdateLines(IDictionary<string, string> table)
     {
+        if (table.Count > lines.Count)
+        {
+            var lines = GameObject.FindGameObjectsWithTag("line");
+            foreach (var line in lines)
+            {
+                Destroy(line);
+            }
+
+            InstantiateIndex(table);
+            return;
+        }
+
         int index = 0;
         foreach (var value in table)
         {
@@ -45,8 +63,12 @@ public class UIIndexScrollView : MonoBehaviour
                 sb.Append($"key:{value.Key}, value: {value.Value}");
                 lines[index].GetComponent<Image>().color = Color.green;
             }
-            lines[index].SetText(sb.ToString());
+            else
+            {
+                lines[index].GetComponent<Image>().color = Color.white;
+            }
 
+            lines[index].SetText(sb.ToString());
             index++;
         }
     }
