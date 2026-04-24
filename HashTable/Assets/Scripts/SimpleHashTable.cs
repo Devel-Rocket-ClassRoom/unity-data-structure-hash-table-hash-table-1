@@ -145,6 +145,8 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 
     public bool Remove(TKey key)
     {
+        if (!ContainsKey(key)) throw new Exception("키 없음");
+
         int index = GetHash(key);
         hashTable[index] = new KeyValuePair<TKey, TValue>();
         occupied[index] = false;
