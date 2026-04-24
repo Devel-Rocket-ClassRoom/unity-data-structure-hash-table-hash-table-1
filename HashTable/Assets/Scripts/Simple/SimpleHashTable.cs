@@ -5,8 +5,10 @@ using System.Collections.Generic;
 public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 {
     private int capacity = 16;
-    private int count = 0;
     public int Count => capacity;
+
+    private int count = 0;
+    public int FactorCount => count;
 
     private List<KeyValuePair<TKey, TValue>> hashTable = new();
     private List<bool> occupied = new();
@@ -20,15 +22,15 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
         }
     }
 
-    public TValue this[TKey key] 
-    { 
+    public TValue this[TKey key]
+    {
         get
         {
             int index = GetHash(key);
             return hashTable[index].Value;
         }
 
-        set => throw new NotImplementedException(); 
+        set => throw new NotImplementedException();
     }
 
     public ICollection<TKey> Keys => throw new NotImplementedException();
