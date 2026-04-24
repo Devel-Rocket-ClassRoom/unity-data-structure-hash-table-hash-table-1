@@ -5,14 +5,18 @@ using System.Collections.Generic;
 
 public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 {
-    private int capacity = 16;
-    public int Count => capacity;
+    private const int initial_capacity = 16;
+
+    private int capacity = initial_capacity;
+    public int Capacity => capacity;
 
     private int count = 0;
+    public int Count => count;
+
     public int FactorCount => count;
 
-    private List<KeyValuePair<TKey, TValue>> hashTable = new();
-    private List<bool> occupied = new();
+    private List<KeyValuePair<TKey, TValue>> hashTable = new List<KeyValuePair<TKey, TValue>>(initial_capacity);
+    private List<bool> occupied = new(initial_capacity);
 
     public SimpleHashTable()
     {
@@ -46,7 +50,7 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
         {
             var keyList = new List<TKey>();
 
-            for (int i = 0; i < hashTable.Count; i++)
+            for (int i = 0; i < hashTable.Capacity; i++)
             {
                 if (occupied[i])
                 {
@@ -64,7 +68,7 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
         {
             var valueList = new List<TValue>();
 
-            for (int i = 0; i < hashTable.Count; i++)
+            for (int i = 0; i < hashTable.Capacity; i++)
             {
                 if (occupied[i])
                 {
@@ -105,8 +109,8 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 
     public void Clear()
     {
-        List<KeyValuePair<TKey, TValue>> newHashTable = new();
-        List<bool> newOccupied = new();
+        List<KeyValuePair<TKey, TValue>> newHashTable = new(initial_capacity);
+        List<bool> newOccupied = new(initial_capacity);
 
         for (int i = 0; i < capacity; i++)
         {
@@ -196,7 +200,7 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
         }
 
         // 모든 원소를 새 크기 기준으로 해싱해 재배치
-        for (int i = 0; i < hashTable.Count; i++)
+        for (int i = 0; i < hashTable.Capacity; i++)
         {
             if (!occupied[i])
             {
