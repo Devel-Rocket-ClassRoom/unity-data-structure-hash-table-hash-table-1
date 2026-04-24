@@ -50,13 +50,18 @@ public class UIRightPanel : MonoBehaviour
 
     private void Start()
     {
-        AdressDropDown.interactable = false;
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+            coroutine = null;
+        }
         coroutine = StartCoroutine(CoAdress());
     }
 
     private IEnumerator CoAdress()
     {
-        yield return new WaitForSeconds(0.01f);
+        yield return null;
+        AdressDropDown.interactable = false;
         AdressDropDown.captionText.text = "-";
     }
 
@@ -69,7 +74,17 @@ public class UIRightPanel : MonoBehaviour
         if(currentType == HashTableType.OpenAdressing)
         {
             AdressDropDown.interactable = true;
-       
+            AdressDropDown.value = 0;
+        }
+        else
+        {
+            if (coroutine != null)
+            {
+                StopCoroutine(coroutine);
+                coroutine = null;
+            }
+            AdressDropDown.interactable = false;
+            coroutine = StartCoroutine(CoAdress());
         }
 
         switch (currentType)
@@ -122,6 +137,14 @@ public class UIRightPanel : MonoBehaviour
     {
         try
         {
+            Debug.Log(Key.text);
+
+            if (string.IsNullOrEmpty(Key.text))
+            {
+                logText.text = $"{logText.text}\nADD 실패: 빈 값";
+                return;
+            }
+
             switch (currentType)
             {
                 case HashTableType.Simple:
@@ -150,11 +173,11 @@ public class UIRightPanel : MonoBehaviour
         {
             case HashTableType.Simple:
             case HashTableType.OpenAdressing:
-                hashTable.Add(Key.text, Value.text);
+                hashTable.Remove(Key.text);
                 scrollView.UpdateLines(hashTable);
                 break;
             case HashTableType.Chaining:
-                chaining.Add(Key.text, Value.text);
+                chaining.Remove(Key.text);
                 scrollView.ChainUpdate(chaining);
                 break;
         }
