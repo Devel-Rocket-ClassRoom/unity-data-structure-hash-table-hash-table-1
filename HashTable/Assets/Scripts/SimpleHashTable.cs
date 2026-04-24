@@ -74,7 +74,7 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
         }
     }
 
-    public bool IsReadOnly => true;
+    public bool IsReadOnly => false;
 
     public void Add(TKey key, TValue value)
     {
@@ -191,6 +191,7 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
             newOccupied.Add(false);
         }
 
+        // 모든 원소를 새 크기 기준으로 해싱해 재배치
         // 모든 원소를 새 크기 기준으로 해싱해 재배치
         for (int i = 0; i < hashTable.Count; i++)
         {
