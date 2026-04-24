@@ -31,13 +31,50 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
             return hashTable[index].Value;
         }
 
-        set => throw new NotImplementedException();
+        set
+        {
+            int index = GetHash(key);
+            hashTable[index] = new KeyValuePair<TKey, TValue>(key, value);
+        }
     }
 
-    public ICollection<TKey> Keys => throw new NotImplementedException();
-    public ICollection<TValue> Values => throw new NotImplementedException();
+    public ICollection<TKey> Keys
+    {
+        get
+        {
+            var keyList = new List<TKey>();
 
-    public bool IsReadOnly => true;
+            for (int i = 0; i < hashTable.Count; i++)
+            {
+                if (occupied[i])
+                {
+                    keyList.Add(hashTable[i].Key);
+                }
+            }
+
+            return keyList;
+        }
+    }
+
+    public ICollection<TValue> Values
+    {
+        get
+        {
+            var valueList = new List<TValue>();
+
+            for (int i = 0; i < hashTable.Count; i++)
+            {
+                if (occupied[i])
+                {
+                    valueList.Add(hashTable[i].Value);
+                }
+            }
+
+            return valueList;
+        }
+    }
+
+    public bool IsReadOnly => false;
 
     public void Add(TKey key, TValue value)
     {
@@ -66,31 +103,34 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 
     public void Clear()
     {
-        hashTable.Clear();
-        occupied.Clear();
-
-        count = 0;
+        List<KeyValuePair<TKey, TValue>> newHashTable = new();
+        List<bool> newOccupied = new();
 
         for (int i = 0; i < capacity; i++)
         {
-            hashTable[i] = new KeyValuePair<TKey, TValue>();
-            occupied[i] = false;
+            newHashTable.Add(new KeyValuePair<TKey, TValue>());
+            newOccupied.Add(false);
         }
+
+        hashTable = newHashTable;
+        occupied = newOccupied;
+
+        count = 0;
     }
 
     public bool Contains(KeyValuePair<TKey, TValue> item)
     {
-        throw new NotImplementedException();
+        return hashTable.Contains(item);
     }
 
     public bool ContainsKey(TKey key)
     {
-        throw new NotImplementedException();
+        return Keys.Contains(key);
     }
 
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
     {
-        throw new NotImplementedException();
+        hashTable.CopyTo(array, arrayIndex);
     }
 
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
@@ -105,6 +145,8 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 
     public bool Remove(TKey key)
     {
+        if (!ContainsKey(key)) throw new Exception("키 없음");
+
         int index = GetHash(key);
         hashTable[index] = new KeyValuePair<TKey, TValue>();
         occupied[index] = false;
@@ -115,7 +157,15 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 
     public bool TryGetValue(TKey key, out TValue value)
     {
-        throw new NotImplementedException();
+        if (ContainsKey(key))
+        {
+            int index = GetHash(key);
+            value = hashTable[index].Value;
+            return true;
+        }
+
+        value = default(TValue);
+        return false;
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -143,6 +193,7 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
             newOccupied.Add(false);
         }
 
+        // 모든 원소를 새 크기 기준으로 해싱해 재배치
         // 모든 원소를 새 크기 기준으로 해싱해 재배치
         for (int i = 0; i < hashTable.Count; i++)
         {
