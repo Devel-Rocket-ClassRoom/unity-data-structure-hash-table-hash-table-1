@@ -24,22 +24,22 @@ public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
     private int count;
     private readonly ProbingStrategy _strategy;
 
-    private const int InitialCapacity = 16;
+    private const int InitialSize = 16;
     private const double LoadFactor = 0.6;
 
     public int size => keys.Length;
     public OpenAddressingHashTable(ProbingStrategy strategy = ProbingStrategy.Linear)
     {
         _strategy = strategy;
-        InitializeArrays(InitialCapacity);
+        InitializeArrays(InitialSize);
     }
 
-    private void InitializeArrays(int capacity)
+    private void InitializeArrays(int _size)
     {
-        keys = new TKey[capacity];
-        values = new TValue[capacity];
-        occupied = new bool[capacity];
-        deleted = new bool[capacity];
+        keys = new TKey[_size];
+        values = new TValue[_size];
+        occupied = new bool[_size];
+        deleted = new bool[_size];
         count = 0;
     }
 
@@ -145,7 +145,7 @@ public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
     {
         get
         {
-            TKey[] temp = new TKey[size];
+            TKey[] temp = new TKey[count];
 
             int index = 0;
 
@@ -165,7 +165,7 @@ public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
     {
         get
         {
-            TValue[] temp = new TValue[size];
+            TValue[] temp = new TValue[count];
 
             int index = 0;
 
@@ -277,7 +277,7 @@ public class OpenAddressingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
         }
 
         if(array.Length - arrayIndex < count)
-        {
+        {   
             throw new ArgumentException(nameof(array));
         }
 
